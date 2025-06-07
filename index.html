@@ -3,23 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>project IS</title>
+  <title>Sidebar Gallery</title>
   <!-- เชื่อมต่อไฟล์ CSS -->
   <link rel="stylesheet" href="console.css" />
+  <style>
+    /* เพิ่มเอฟเฟกต์ transition ให้กับ gallery-section */
+    .gallery-section {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s;
+      opacity: 0;
+    }
+    .gallery-section.show {
+      max-height: 1000px; /* ควรตั้งให้มากกว่าความสูงจริง */
+      opacity: 1;
+    }
+    /* เพิ่มเอฟเฟกต์ให้ปุ่ม search-box */
+    .search-box {
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .search-box.active {
+      transform: scale(0.95);
+    }
+  </style>
 </head>
 <body>
-  <!-- กรอบ sidebar สำหรับเมนูและ gallery -->
+  <!-- กรอบ sidebar สำหรับเมนู -->
   <div class="sidebar">
-    <!-- ปุ่มด้านบนของ sidebar -->
+    <!-- แถบ menu -->
     <div class="top-buttons">
       <div><img src="https://i.ibb.co/TMX8901M/pngegg-2.png" alt="pngegg-2" border="0"></div>
       <div></div>
       <div></div>
     </div>
-    <!-- กล่องค้นหา -->
-    <div class="search-box">search</div>
-    <!-- ส่วนแกลเลอรี่ไอเท็ม -->
-    <div class="gallery-section">
+    <!-- กล่องค้นหา (คลิกเพื่อแสดง/ซ่อน gallery) -->
+    <div class="search-box" id="searchBox" onclick="toggleGallery()">furniture</div>
+    <!-- ส่วนแกลเลอรี่ไอเท็ม (ซ่อน/แสดงด้วย JS + animation) -->
+    <div class="gallery-section" id="gallerySection">
+      <!-- gallery-row และ item เหมือนเดิม -->
       <div class="gallery-row">
         <div class="item" onclick="selectItem('Item 1')"></div>
         <div class="item" onclick="selectItem('Item 2')"></div>
@@ -33,34 +55,23 @@
         <div class="item" onclick="selectItem('Item 8')"></div>
       </div>
     </div>
-<div class="search-box">search</div>
-    <div class="gallery-section">
+
+    <!-- กล่องค้นหา (คลิกเพื่อแสดง/ซ่อน bedroom gallery) -->
+    <div class="search-box" id="searchBoxBedroom" onclick="toggleGalleryBedroom()">bedroom</div>
+    <!-- ส่วนแกลเลอรี่ไอเท็มสำหรับ bedroom (ซ่อน/แสดงด้วย JS + animation) -->
+    <div class="gallery-section" id="gallerySectionBedroom">
+      <!-- gallery-row และ item สำหรับ bedroom -->
       <div class="gallery-row">
-        <div class="item" onclick="selectItem('Item 9')"></div>
-        <div class="item" onclick="selectItem('Item 10')"></div>
-        <div class="item" onclick="selectItem('Item 11')"></div>
-        <div class="item" onclick="selectItem('Item 12')"></div>
+        <div class="item" onclick="selectItem('Bed 1')"></div>
+        <div class="item" onclick="selectItem('Bed 2')"></div>
+        <div class="item" onclick="selectItem('Bed 3')"></div>
+        <div class="item" onclick="selectItem('Bed 4')"></div>
       </div>
       <div class="gallery-row">
-        <div class="item" onclick="selectItem('Item 13')"></div>
-        <div class="item" onclick="selectItem('Item 14')"></div>
-        <div class="item" onclick="selectItem('Item 15')"></div>
-        <div class="item" onclick="selectItem('Item 16')"></div>
-      </div>
-    </div>
-<div class="search-box">search</div>
-    <div class="gallery-section">
-      <div class="gallery-row">
-        <div class="item" onclick="selectItem('Item 17')"></div>
-        <div class="item" onclick="selectItem('Item 18')"></div>
-        <div class="item" onclick="selectItem('Item 19')"></div>
-        <div class="item" onclick="selectItem('Item 20')"></div>
-      </div>
-      <div class="gallery-row">
-        <div class="item" onclick="selectItem('Item 21')"></div>
-        <div class="item" onclick="selectItem('Item 22')"></div>
-        <div class="item" onclick="selectItem('Item 23')"></div>
-        <div class="item" onclick="selectItem('Item 24')"></div>
+        <div class="item" onclick="selectItem('Wardrobe 1')"></div>
+        <div class="item" onclick="selectItem('Wardrobe 2')"></div>
+        <div class="item" onclick="selectItem('Wardrobe 3')"></div>
+        <div class="item" onclick="selectItem('Wardrobe 4')"></div>
       </div>
     </div>
     
@@ -78,6 +89,44 @@
     function selectItem(name) {
       document.getElementById('displayBox').innerText = name;
       document.getElementById('selectedInfo').innerText = "คุณเลือก: " + name; // แสดงรายละเอียดใต้กล่อง
+    }
+
+    // ฟังก์ชันสำหรับแสดง/ซ่อน gallery พร้อม animation
+    function toggleGallery() {
+      // ดึง element gallerySection และ searchBox
+      var gallery = document.getElementById('gallerySection');
+      var searchBox = document.getElementById('searchBox');
+      // เพิ่มคลาส active ให้ปุ่มเพื่อให้ยุบลง
+      searchBox.classList.add('active');
+      setTimeout(function() {
+        searchBox.classList.remove('active');
+      }, 200);
+
+      // toggle class show เพื่อให้เกิด animation
+      if (!gallery.classList.contains('show')) {
+        gallery.classList.add('show');
+      } else {
+        gallery.classList.remove('show');
+      }
+    }
+
+    // ฟังก์ชันสำหรับแสดง/ซ่อน bedroom gallery พร้อม animation
+    function toggleGalleryBedroom() {
+      // ดึง element gallerySectionBedroom และ searchBoxBedroom
+      var gallery = document.getElementById('gallerySectionBedroom');
+      var searchBox = document.getElementById('searchBoxBedroom');
+      // เพิ่มคลาส active ให้ปุ่มเพื่อให้ยุบลง
+      searchBox.classList.add('active');
+      setTimeout(function() {
+        searchBox.classList.remove('active');
+      }, 200);
+
+      // toggle class show เพื่อให้เกิด animation
+      if (!gallery.classList.contains('show')) {
+        gallery.classList.add('show');
+      } else {
+        gallery.classList.remove('show');
+      }
     }
   </script>
 </body>
