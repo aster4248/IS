@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>project IS</title>
+  <!-- เชื่อมต่อไฟล์ CSS -->
+  <link rel="stylesheet" href="console.css" />
+</head>
+<body>
+  <!-- กรอบ sidebar สำหรับเมนูและ gallery -->
+  <div class="sidebar">
+    <!-- ปุ่มด้านบนของ sidebar -->
+    <div class="top-buttons">
+      <div><img src="https://i.ibb.co/TMX8901M/pngegg-2.png" alt="pngegg-2" border="0"></div>
+      <div></div>
+      <div></div>
+    </div>
+    <!-- กล่องค้นหา -->
+    <div class="search-box">search</div>
+    <!-- ส่วนแกลเลอรี่ไอเท็ม -->
+    <div class="gallery-section">
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 1')"></div>
+        <div class="item" onclick="selectItem('Item 2')"></div>
+        <div class="item" onclick="selectItem('Item 3')"></div>
+        <div class="item" onclick="selectItem('Item 4')"></div>
+      </div>
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 5')"></div>
+        <div class="item" onclick="selectItem('Item 6')"></div>
+        <div class="item" onclick="selectItem('Item 7')"></div>
+        <div class="item" onclick="selectItem('Item 8')"></div>
+      </div>
+    </div>
+<div class="search-box">search</div>
+    <div class="gallery-section">
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 9')"></div>
+        <div class="item" onclick="selectItem('Item 10')"></div>
+        <div class="item" onclick="selectItem('Item 11')"></div>
+        <div class="item" onclick="selectItem('Item 12')"></div>
+      </div>
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 13')"></div>
+        <div class="item" onclick="selectItem('Item 14')"></div>
+        <div class="item" onclick="selectItem('Item 15')"></div>
+        <div class="item" onclick="selectItem('Item 16')"></div>
+      </div>
+    </div>
+<div class="search-box">search</div>
+    <div class="gallery-section">
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 17')"></div>
+        <div class="item" onclick="selectItem('Item 18')"></div>
+        <div class="item" onclick="selectItem('Item 19')"></div>
+        <div class="item" onclick="selectItem('Item 20')"></div>
+      </div>
+      <div class="gallery-row">
+        <div class="item" onclick="selectItem('Item 21')"></div>
+        <div class="item" onclick="selectItem('Item 22')"></div>
+        <div class="item" onclick="selectItem('Item 23')"></div>
+        <div class="item" onclick="selectItem('Item 24')"></div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- กล่องแสดงผลเนื้อหาหลัก (อยู่กลางจอ) -->
+  <div class="content-display">
+    <div class="display-box" id="displayBox">เลือกไอเท็ม</div>
+    <div class="selected-info" id="selectedInfo"></div>
+  </div>
+
+  <!-- สคริปต์สำหรับเปลี่ยนข้อความเมื่อเลือกไอเท็ม -->
+  <script>
+    // ฟังก์ชันสำหรับเปลี่ยนข้อความในกล่องแสดงผลเมื่อเลือกไอเท็ม
+    function selectItem(name) {
+      document.getElementById('displayBox').innerText = name;
+      document.getElementById('selectedInfo').innerText = "คุณเลือก: " + name; // แสดงรายละเอียดใต้กล่อง
+    }
+  </script>
+</body>
+</html>
