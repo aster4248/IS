@@ -1,26 +1,27 @@
 function selectItem(name) {
-  if (
+  // ถ้าเป็นไฟล์โมเดล 3D ให้แสดง model-viewer ตรงกลาง และหมุนกล้องได้
+  if (name.endsWith('.glb') || name.endsWith('.gltf')) {
+    document.getElementById('displayBox').innerHTML = `
+      <model-viewer src="${name}" alt="3D model"
+        auto-rotate
+        camera-controls
+        style="width: 100%; height: 100%; max-width: 400px; max-height: 400px; background: transparent;">
+      </model-viewer>
+    `;
+    document.getElementById('selectedInfo').innerText = ""; // ลบข้อความ "คุณเลือก: โมเดล 3D"
+  }
+  // ถ้าเป็นไฟล์รูปภาพ
+  else if (
     name.endsWith('.png') ||
     name.endsWith('.jpg') ||
     name.endsWith('.jpeg')
   ) {
     document.getElementById('displayBox').innerHTML = `
-      <div style="display:flex;justify-content:center;align-items:center;height:100%;">
-        <img src="${name}" alt="selected" style="max-width:100%;max-height:250px;">
-      </div>
+      <img src="${name}" alt="selected" style="max-width:100%;max-height:250px;">
     `;
     document.getElementById('selectedInfo').innerText = "คุณเลือก: รูปภาพ";
   }
-  // ถ้าเป็นไฟล์โมเดล 3D ให้แสดง model-viewer ตรงกลาง
-  else if (name.endsWith('.glb') || name.endsWith('.gltf')) {
-    document.getElementById('displayBox').innerHTML = `
-      <div style="display:flex;justify-content:center;align-items:center;height:100%;">
-        <model-viewer src="${name}" alt="3D model" auto-rotate camera-controls style="width: 300px; height: 300px;"></model-viewer>
-      </div>
-    `;
-    document.getElementById('selectedInfo').innerText = "คุณเลือก: โมเดล 3D";
-  }
-  // กรณีอื่นๆ แสดงข้อความธรรมดา
+  // กรณีอื่นๆ
   else {
     document.getElementById('displayBox').innerText = name;
     document.getElementById('selectedInfo').innerText = "คุณเลือก: " + name;

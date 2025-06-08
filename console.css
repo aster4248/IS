@@ -6,15 +6,19 @@
 /* ตั้งค่าพื้นฐานของ body */
 body {
   margin: 0;
-  font-family: sans-serif;
-  display: flex;           /* ให้ลูกใน body เรียงแนวนอน */
-  background: #363636;     /* เปลี่ยนสีพื้นหลังเป็น #363636 */
+  padding: 0;
+  box-sizing: border-box;
+  background: #111; /* พื้นหลังเว็บสีดำ */
+}
+.main-layout {
+  display: flex;
+  height: 100vh;
 }
 
 /* กรอบ sidebar ด้านซ้าย ใช้สำหรับเมนูหรือ gallery */
 .sidebar {
-  width: 450px;                  /* ความกว้าง sidebar */
-  background: #494646;           /* สีพื้นหลัง */
+  width: 300px;                  /* ความกว้าง sidebar */
+  background: #222;
   padding: 30px 10px 30px 10px;  /* padding-top และ padding-bottom เท่ากัน */
   border-radius: 20px;           /* มุมโค้งมนรอบด้าน */
   box-shadow: 0 0 10px #aaa;     /* เงา */
@@ -25,6 +29,7 @@ body {
   margin-left: 40px;             /* ขยับกรอบมาทางขวา 10px */
   max-height: 90vh;              /* จำกัดความสูง sidebar ไม่ให้เกิน 90% ของหน้าจอ */
   overflow-y: auto;              /* แสดงแถบเลื่อนแนวตั้งเมื่อเนื้อหาเกินกรอบ */
+  z-index: 2;
 }
 
 /* แถบปุ่มด้านบนของ sidebar */
@@ -82,53 +87,57 @@ body {
   padding: 5px;                    /* ระยะขอบใน */
   border-radius: 10px;             /* มุมโค้ง */
   margin-bottom: 10px;             /* เว้นระยะด้านล่าง */
+  margin-top: 16px;
 }
 
 /* แถวของไอเท็มใน gallery */
 .gallery-row {
-  display: flex;                   /* เรียงไอเท็มแนวนอน */
-  justify-content: space-around;   /* กระจายไอเท็มให้ห่างกัน */
-  flex-wrap: wrap;                 /* ขึ้นบรรทัดใหม่ถ้าเต็ม */
-  margin-bottom: 5px;              /* เว้นระยะด้านล่าง */
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 /* ไอเท็มแต่ละชิ้นใน gallery */
 .item {
   width: 60px;
   height: 60px;
-  background: linear-gradient(#cceeff, #99cc66); /* ไล่สีพื้นหลัง */
-  border-radius: 10px;             /* มุมโค้ง */
-  margin: 5px;                     /* เว้นระยะรอบไอเท็ม */
+  background: #333;
+  border-radius: 8px;
+  border: 2px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;                 /* เปลี่ยนเมาส์เป็น pointer เมื่อ hover */
-  transition: transform 0.2s;      /* เพิ่ม transition สำหรับเอฟเฟกต์ขยาย */
+  transition: border 0.2s;      /* เพิ่ม transition สำหรับเอฟเฟกต์ขยาย */
 }
 .item:hover {
+  border: 2px solid #fff;
   transform: scale(1.15);          /* ขยายขนาดเมื่อ hover */
   z-index: 1;                      /* ให้อยู่เหนือไอเท็มอื่น */
 }
 
 /* ส่วนแสดงผลเนื้อหาหลักขวาของ sidebar */
 .content-display {
-  flex-grow: 1;                    /* ขยายเต็มพื้นที่ที่เหลือ */
-  display: flex;                   /* ใช้ flexbox */
-  flex-direction: column;          /* เรียงแนวตั้ง */
-  justify-content: center;         /* จัดให้อยู่กึ่งกลางแนวตั้ง */
-  align-items: center;             /* จัดให้อยู่กึ่งกลางแนวนอน */
-  min-height: 100vh;               /* ให้สูงเต็มหน้าจอ */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  height: 100vh;
+  z-index: 1;
 }
 
 /* กล่องแสดงผล (display box) สำหรับแสดงข้อความหรือข้อมูลที่เลือก */
 .display-box {
-  width: 300px;                    /* ความกว้างกล่อง */
-  height: 120px;                   /* ความสูงกล่อง */
-  background: #eee;                /* สีพื้นหลัง */
-  border: 2px dashed #ccc;         /* เส้นขอบแบบเส้นประ */
-  display: flex;                   /* ใช้ flexbox */
-  justify-content: center;         /* จัดข้อความแนวนอนกึ่งกลาง */
-  align-items: center;             /* จัดข้อความแนวตั้งกึ่งกลาง */
-  font-size: 24px;                 /* ขนาดตัวอักษร */
-  color: #777;                     /* สีตัวอักษร */
-  margin-bottom: 24px;             /* เพิ่มระยะห่างด้านล่าง */
+  width: 400px;
+  height: 400px;
+  background: transparent; /* ไม่มีพื้นหลัง */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 /* กล่องขั้นระหว่างกล่องแสดงผลกับรายละเอียด */
@@ -141,9 +150,9 @@ body {
 
 /* กล่องรายละเอียดเพิ่มเติมใต้กล่องหลัก */
 .selected-info {
-  font-size: 18px;
   color: #fff;
-  margin-top: 8px;
+  margin-top: 16px;
+  font-size: 18px;
   min-height: 28px;
   text-align: center;
 }
