@@ -1,0 +1,60 @@
+function selectItem(name) {
+  if (
+    name.endsWith('.png') ||
+    name.endsWith('.jpg') ||
+    name.endsWith('.jpeg')
+  ) {
+    document.getElementById('displayBox').innerHTML = `
+      <div style="display:flex;justify-content:center;align-items:center;height:100%;">
+        <img src="${name}" alt="selected" style="max-width:100%;max-height:250px;">
+      </div>
+    `;
+    document.getElementById('selectedInfo').innerText = "คุณเลือก: รูปภาพ";
+  }
+  // ถ้าเป็นไฟล์โมเดล 3D ให้แสดง model-viewer ตรงกลาง
+  else if (name.endsWith('.glb') || name.endsWith('.gltf')) {
+    document.getElementById('displayBox').innerHTML = `
+      <div style="display:flex;justify-content:center;align-items:center;height:100%;">
+        <model-viewer src="${name}" alt="3D model" auto-rotate camera-controls style="width: 300px; height: 300px;"></model-viewer>
+      </div>
+    `;
+    document.getElementById('selectedInfo').innerText = "คุณเลือก: โมเดล 3D";
+  }
+  // กรณีอื่นๆ แสดงข้อความธรรมดา
+  else {
+    document.getElementById('displayBox').innerText = name;
+    document.getElementById('selectedInfo').innerText = "คุณเลือก: " + name;
+  }
+}
+
+// ฟังก์ชันสำหรับแสดง/ซ่อน gallery หมวด furniture
+function toggleGallery() {
+  var gallery = document.getElementById('gallerySection');
+  var searchBox = document.getElementById('searchBox');
+  searchBox.classList.add('active');
+  setTimeout(function() {
+    searchBox.classList.remove('active');
+  }, 200);
+
+  if (!gallery.classList.contains('show')) {
+    gallery.classList.add('show');
+  } else {
+    gallery.classList.remove('show');
+  }
+}
+
+// ฟังก์ชันสำหรับแสดง/ซ่อน gallery หมวด bedroom
+function toggleGalleryBedroom() {
+  var gallery = document.getElementById('gallerySectionBedroom');
+  var searchBox = document.getElementById('searchBoxBedroom');
+  searchBox.classList.add('active');
+  setTimeout(function() {
+    searchBox.classList.remove('active');
+  }, 200);
+
+  if (!gallery.classList.contains('show')) {
+    gallery.classList.add('show');
+  } else {
+    gallery.classList.remove('show');
+  }
+}

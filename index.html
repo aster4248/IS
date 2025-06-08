@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sidebar Gallery</title>
-  <!-- เชื่อมต่อไฟล์ CSS -->
+  <!-- เชื่อมต่อไฟล์ CSS สำหรับตกแต่งหน้าเว็บ -->
   <link rel="stylesheet" href="console.css" />
   <style>
-    /* เพิ่มเอฟเฟกต์ transition ให้กับ gallery-section */
+    /* สไตล์สำหรับ gallery-section (แกลเลอรี่ที่ซ่อน/แสดง) */
     .gallery-section {
       max-height: 0;
       overflow: hidden;
@@ -18,7 +18,7 @@
       max-height: 1000px; /* ควรตั้งให้มากกว่าความสูงจริง */
       opacity: 1;
     }
-    /* เพิ่มเอฟเฟกต์ให้ปุ่ม search-box */
+    /* สไตล์สำหรับปุ่ม search-box */
     .search-box {
       transition: transform 0.2s;
       cursor: pointer;
@@ -27,23 +27,24 @@
       transform: scale(0.95);
     }
   </style>
+  <!-- เรียกใช้งาน model-viewer สำหรับแสดงโมเดล 3D -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <!-- กรอบ sidebar สำหรับเมนู -->
+  <!-- Sidebar สำหรับเมนูและแกลเลอรี่ -->
   <div class="sidebar">
-    <!-- แถบ menu -->
+    <!-- ปุ่มเมนูด้านบน -->
     <div class="top-buttons">
       <div><img src="https://i.ibb.co/TMX8901M/pngegg-2.png" alt="pngegg-2" border="0"></div>
       <div></div>
       <div></div>
     </div>
-    <!-- กล่องค้นหา (คลิกเพื่อแสดง/ซ่อน gallery) -->
+    <!-- ปุ่มค้นหา furniture -->
     <div class="search-box" id="searchBox" onclick="toggleGallery()">furniture</div>
-    <!-- ส่วนแกลเลอรี่ไอเท็ม (ซ่อน/แสดงด้วย JS + animation) -->
+    <!-- แกลเลอรี่ furniture -->
     <div class="gallery-section" id="gallerySection">
-      <!-- gallery-row และ item เหมือนเดิม -->
       <div class="gallery-row">
-        <div class="item" onclick="selectItem('Item 1')"></div>
+        <div class="item" onclick="selectItem('item 1')"></div>
         <div class="item" onclick="selectItem('Item 2')"></div>
         <div class="item" onclick="selectItem('Item 3')"></div>
         <div class="item" onclick="selectItem('Item 4')"></div>
@@ -55,12 +56,10 @@
         <div class="item" onclick="selectItem('Item 8')"></div>
       </div>
     </div>
-
-    <!-- กล่องค้นหา (คลิกเพื่อแสดง/ซ่อน bedroom gallery) -->
+    <!-- ปุ่มค้นหา bedroom -->
     <div class="search-box" id="searchBoxBedroom" onclick="toggleGalleryBedroom()">bedroom</div>
-    <!-- ส่วนแกลเลอรี่ไอเท็มสำหรับ bedroom (ซ่อน/แสดงด้วย JS + animation) -->
+    <!-- แกลเลอรี่ bedroom -->
     <div class="gallery-section" id="gallerySectionBedroom">
-      <!-- gallery-row และ item สำหรับ bedroom -->
       <div class="gallery-row">
         <div class="item" onclick="selectItem('Bed 1')"></div>
         <div class="item" onclick="selectItem('Bed 2')"></div>
@@ -74,60 +73,13 @@
         <div class="item" onclick="selectItem('Wardrobe 4')"></div>
       </div>
     </div>
-    
   </div>
-
   <!-- กล่องแสดงผลเนื้อหาหลัก (อยู่กลางจอ) -->
   <div class="content-display">
     <div class="display-box" id="displayBox">เลือกไอเท็ม</div>
     <div class="selected-info" id="selectedInfo"></div>
   </div>
-
-  <!-- สคริปต์สำหรับเปลี่ยนข้อความเมื่อเลือกไอเท็ม -->
-  <script>
-    // ฟังก์ชันสำหรับเปลี่ยนข้อความในกล่องแสดงผลเมื่อเลือกไอเท็ม
-    function selectItem(name) {
-      document.getElementById('displayBox').innerText = name;
-      document.getElementById('selectedInfo').innerText = "คุณเลือก: " + name; // แสดงรายละเอียดใต้กล่อง
-    }
-
-    // ฟังก์ชันสำหรับแสดง/ซ่อน gallery พร้อม animation
-    function toggleGallery() {
-      // ดึง element gallerySection และ searchBox
-      var gallery = document.getElementById('gallerySection');
-      var searchBox = document.getElementById('searchBox');
-      // เพิ่มคลาส active ให้ปุ่มเพื่อให้ยุบลง
-      searchBox.classList.add('active');
-      setTimeout(function() {
-        searchBox.classList.remove('active');
-      }, 200);
-
-      // toggle class show เพื่อให้เกิด animation
-      if (!gallery.classList.contains('show')) {
-        gallery.classList.add('show');
-      } else {
-        gallery.classList.remove('show');
-      }
-    }
-
-    // ฟังก์ชันสำหรับแสดง/ซ่อน bedroom gallery พร้อม animation
-    function toggleGalleryBedroom() {
-      // ดึง element gallerySectionBedroom และ searchBoxBedroom
-      var gallery = document.getElementById('gallerySectionBedroom');
-      var searchBox = document.getElementById('searchBoxBedroom');
-      // เพิ่มคลาส active ให้ปุ่มเพื่อให้ยุบลง
-      searchBox.classList.add('active');
-      setTimeout(function() {
-        searchBox.classList.remove('active');
-      }, 200);
-
-      // toggle class show เพื่อให้เกิด animation
-      if (!gallery.classList.contains('show')) {
-        gallery.classList.add('show');
-      } else {
-        gallery.classList.remove('show');
-      }
-    }
-  </script>
+  <!-- เชื่อมต่อไฟล์ JavaScript ภายนอก -->
+  <script src="app.js"></script>
 </body>
 </html>
