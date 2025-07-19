@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Interior Designer</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/object-controls.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen">
+        <div class="welcome-container">
+            <h1>3D Interior Designer</h1>
+            <p>Design your dream space in 3D</p>
+            <div class="projects-container">
+                <h2>Your Projects</h2>
+                <div id="project-list">
+                    <p class="empty-message">No projects yet</p>
+                </div>
+            </div>
+            <button id="create-project-btn" class="primary-btn">Create New Project</button>
+            <div class="help-section">
+                <h3>Getting Started</h3>
+                <ul>
+                    <li>Use the sidebar to select furniture and objects</li>
+                    <li>Click and drag to move around the 3D space</li>
+                    <li>Right-click and drag to rotate the view</li>
+                    <li>Scroll to zoom in and out</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Room Size Selection Modal (Initially Hidden) -->
+    <div id="room-size-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Select Room Size</h2>
+            <div class="size-selection">
+                <div class="size-option">
+                    <label for="room-width">Width (meters):</label>
+                    <input type="number" id="room-width" min="3" max="30" value="10" step="1">
+                </div>
+                <div class="size-option">
+                    <label for="room-length">Length (meters):</label>
+                    <input type="number" id="room-length" min="3" max="30" value="10" step="1">
+                </div>
+                <div class="room-preview">
+                    <div id="room-preview-visual"></div>
+                    <p>Preview (top view)</p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="cancel-room-btn" class="secondary-btn">Cancel</button>
+                <button id="confirm-room-btn" class="primary-btn">Create Room</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Design Area (Initially Hidden) -->
+    <div id="design-area" style="display: none;">
+        <!-- 3D Canvas -->
+        <canvas id="canvas3d"></canvas>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="function-tabs">
+                    <div class="function-tab active" data-function="build">Build</div>
+                    <div class="function-tab" data-function="furnish">Furnish</div>
+                    <div class="function-tab" data-function="outdoor">Outdoor</div>
+                    <div class="function-tab" data-function="find">Find</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Categories for Build Function -->
+                <div class="function-content active" id="build-content">
+                    <div class="category" data-category="walls">Walls</div>
+                    <div class="category" data-category="floors">Floors</div>
+                    <div class="category" data-category="doors">Doors</div>
+                    <div class="category" data-category="windows">Windows</div>
+                    <div class="category" data-category="stairs">Stairs</div>
+                </div>
+                
+                <!-- Categories for Furnish Function -->
+                <div class="function-content" id="furnish-content">
+                    <div class="category" data-category="general">General</div>
+                    <div class="category" data-category="bedroom">Bedroom</div>
+                    <div class="category" data-category="livingroom">Living Room</div>
+                    <div class="category" data-category="kitchen">Kitchen</div>
+                    <div class="category" data-category="bathroom">Bathroom</div>
+                    <div class="category" data-category="office">Office</div>
+                </div>
+                
+                <!-- Categories for Outdoor Function -->
+                <div class="function-content" id="outdoor-content">
+                    <div class="category" data-category="plants">Plants</div>
+                    <div class="category" data-category="furniture">Outdoor Furniture</div>
+                    <div class="category" data-category="decor">Outdoor Decor</div>
+                    <div class="category" data-category="lighting">Outdoor Lighting</div>
+                </div>
+                
+                <!-- Find Furniture Search -->
+                <div class="function-content" id="find-content">
+                    <div class="search-container">
+                        <input type="text" id="furniture-search" placeholder="Search furniture...">
+                        <button id="search-btn">Search</button>
+                    </div>
+                    <div id="search-results"></div>
+                </div>
+            </div>
+            
+            <!-- Items Container (shows when category is selected) -->
+            <div class="items-container" style="display: none;">
+                <div class="items-header">
+                    <button class="back-btn">← Back</button>
+                    <h3 id="category-title">Category Name</h3>
+                </div>
+                <div id="items-list"></div>
+            </div>
+        </div>
+        
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <button id="light-btn" class="control-btn">Adjust Lighting</button>
+            <button id="camera-btn" class="control-btn">Camera View</button>
+            <button id="theme-btn" class="control-btn">Theme Settings</button>
+            <button id="save-btn" class="control-btn">Save Project</button>
+            <button id="exit-btn" class="control-btn">Exit to Menu</button>
+        </div>
+        
+        <!-- Lighting Controls (Initially Hidden) -->
+        <div id="lighting-panel" class="control-panel" style="display: none;">
+            <h3>Lighting Controls</h3>
+            <div class="slider-control">
+                <label for="ambient-light">Ambient Light:</label>
+                <input type="range" id="ambient-light" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="slider-control">
+                <label for="directional-light">Directional Light:</label>
+                <input type="range" id="directional-light" min="0" max="1" step="0.1" value="0.7">
+            </div>
+            <button id="close-lighting" class="close-panel">Close</button>
+        </div>
+        
+        <!-- Object Controls (Initially Hidden) -->
+        <div id="object-controls" class="object-controls">
+            <h3>Object Controls</h3>
+            <div class="slider-control">
+                <label for="object-scale">Scale:</label>
+                <input type="range" id="object-scale" min="0.1" max="3" step="0.1" value="1">
+            </div>
+            <div class="slider-control">
+                <label for="object-rotation">Rotation (Y):</label>
+                <input type="range" id="object-rotation" min="0" max="360" step="5" value="0">
+            </div>
+            <button id="move-up" class="control-btn">Move Up</button>
+            <button id="move-down" class="control-btn">Move Down</button>
+            <button id="delete-object" class="control-btn">Delete</button>
+        </div>
+        
+        <!-- Theme Settings Panel (Initially Hidden) -->
+        <div id="theme-panel" class="control-panel" style="display: none;">
+            <h3>Theme Settings</h3>
+            <div class="theme-options">
+                <div class="theme-option" data-theme="light">
+                    <div class="theme-preview light-theme"></div>
+                    <div class="theme-name">Light Theme</div>
+                </div>
+                <div class="theme-option" data-theme="dark">
+                    <div class="theme-preview dark-theme"></div>
+                    <div class="theme-name">Dark Theme</div>
+                </div>
+            </div>
+            <button id="close-theme" class="close-panel">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

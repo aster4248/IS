@@ -1,0 +1,135 @@
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background-color: var(--welcome-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--btn-bg);
+}
+
+.size-selection {
+    margin-bottom: 1.5rem;
+}
+
+.size-option {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.size-option label {
+    font-size: 1.1rem;
+    margin-right: 1rem;
+}
+
+.size-option input {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: var(--welcome-bg);
+    color: var(--text-color);
+}
+
+.room-preview {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#room-preview-visual {
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--btn-bg);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    position: relative;
+    background-color: rgba(22, 96, 136, 0.1);
+    transition: width 0.3s, height 0.3s;
+}
+
+#room-preview-visual::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 80%;
+    border: 1px dashed var(--btn-bg);
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.secondary-btn {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.secondary-btn:hover {
+    background-color: #bbb;
+}
+
+/* Drag handle for objects */
+.drag-handle {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(22, 96, 136, 0.8);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: move;
+    z-index: 12;
+    top: 5px;
+    right: 5px;
+}
+
+.drag-handle::before {
+    content: "⋮";
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Dragging state */
+.dragging {
+    opacity: 0.7;
+    cursor: move;
+}
