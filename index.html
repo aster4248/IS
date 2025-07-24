@@ -1,187 +1,526 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Interior Designer</title>
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/object-controls.css">
-    <link rel="stylesheet" href="css/modal.css">
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
-</head>
-<body>
-    <!-- Welcome Screen -->
-    <div id="welcome-screen">
-        <div class="welcome-container">
-            <h1>3D Interior Designer</h1>
-            <p>Design your dream space in 3D</p>
-            <div class="projects-container">
-                <h2>Your Projects</h2>
-                <div id="project-list">
-                    <p class="empty-message">No projects yet</p>
-                </div>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script>
+      // ตรวจสอบว่า THREE ถูกโหลดแล้ว
+      if (typeof THREE === 'undefined') {
+        console.error('THREE.js ไม่ถูกโหลด');
+      } else {
+        console.log('THREE.js ถูกโหลดแล้ว:', THREE.REVISION);
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
+    <script>
+      // แก้ไขปัญหา namespace ของ GLTFLoader
+      document.addEventListener('DOMContentLoaded', function() {
+        // รอให้ THREE.js โหลดเสร็จก่อน
+        if (typeof THREE !== 'undefined') {
+          // ตรวจสอบว่า GLTFLoader ถูกโหลดหรือไม่
+          if (typeof THREE.GLTFLoader === 'undefined' && typeof window.GLTFLoader !== 'undefined') {
+            THREE.GLTFLoader = window.GLTFLoader;
+            console.log('กำหนด THREE.GLTFLoader แล้ว');
+          }
+          
+          // ตรวจสอบว่า DRACOLoader ถูกโหลดหรือไม่
+          if (typeof THREE.DRACOLoader === 'undefined' && typeof window.DRACOLoader !== 'undefined') {
+            THREE.DRACOLoader = window.DRACOLoader;
+            console.log('กำหนด THREE.DRACOLoader แล้ว');
+          }
+          
+          // ตรวจสอบว่า OrbitControls ถูกโหลดหรือไม่
+          if (typeof THREE.OrbitControls === 'undefined' && typeof window.OrbitControls !== 'undefined') {
+            THREE.OrbitControls = window.OrbitControls;
+            console.log('กำหนด THREE.OrbitControls แล้ว');
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Page 1: Welcome -->
+      <div id="welcome-page" class="page active">
+        <!-- Navigation Bar (Fixed) -->
+        <nav class="navbar">
+          <div class="nav-left">
+            <div class="universal-settings">
+              <button id="universal-settings-btn" class="universal-settings-btn" title="การตั้งค่า / Settings">
+                <span class="settings-icon">⚙️</span>
+              </button>
             </div>
-            <button id="create-project-btn" class="primary-btn">Create New Project</button>
-            <div class="help-section">
-                <h3>Getting Started</h3>
-                <ul>
-                    <li>Use the sidebar to select furniture and objects</li>
-                    <li>Click and drag to move around the 3D space</li>
-                    <li>Right-click and drag to rotate the view</li>
-                    <li>Scroll to zoom in and out</li>
-                </ul>
+          </div>
+          <div class="nav-center">
+            <ul class="nav-menu">
+              <li><a href="#welcome" class="nav-link active" data-en="Home" data-th="หน้าแรก">หน้าแรก</a></li>
+              <li><a href="#examples" class="nav-link" data-en="Examples" data-th="ตัวอย่าง">ตัวอย่าง</a></li>
+              <li><a href="#documents" class="nav-link" data-en="Documents" data-th="เอกสาร">เอกสาร</a></li>
+              <li><a href="#gallery" class="nav-link" data-en="Gallery" data-th="ผลงาน">ผลงาน</a></li>
+              <li><a href="#about" class="nav-link" data-en="About" data-th="เกี่ยวกับ">เกี่ยวกับ</a></li>
+            </ul>
+          </div>
+          <div class="nav-right">
+            <div class="logo-area">
+              <!-- พื้นที่ใส่logo -->
+              <span data-en="LOGO AREA" data-th="พื้นที่ใส่logo">พื้นที่ใส่logo</span>
             </div>
+          </div>
+        </nav>
+
+        <!-- Background Areas -->
+        <div class="background-wrapper">
+          <div class="background-1">
+            <!-- พื้นที่ใส่พื้นหลัง1 -->
+          </div>
+          <div class="background-2">
+            <!-- พื้นที่ใส่พื้นหลัง2 -->
+          </div>
         </div>
-    </div>
-    
-    <!-- Room Size Selection Modal (Initially Hidden) -->
-    <div id="room-size-modal" class="modal" style="display: none;">
+
+        <!-- Welcome Section -->
+        <section id="welcome" class="section welcome-section">
+          <div class="container">
+            <h1 class="main-title" data-en="3D Interior Designer" data-th="นักออกแบบตกแต่งภายใน 3D">นักออกแบบตกแต่งภายใน 3D</h1>
+            <p class="subtitle" data-en="Design your dream space in 3D" data-th="ออกแบบพื้นที่ในฝันของคุณด้วย 3D">ออกแบบพื้นที่ในฝันของคุณด้วย 3D</p>
+            <button class="get-started-btn" data-en="Get Started" data-th="เริ่มต้นใช้งาน">เริ่มต้นใช้งาน</button>
+          </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section id="examples" class="section examples-section">
+          <div class="container">
+            <h2 data-en="Examples" data-th="ตัวอย่างการใช้งาน">ตัวอย่างการใช้งาน</h2>
+            <div class="examples-carousel">
+              <div class="example-item active">
+                <div class="example-image" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
+                  <span data-en="Living Room Design" data-th="ออกแบบห้องนั่งเล่น">ออกแบบห้องนั่งเล่น</span>
+                </div>
+              </div>
+              <div class="example-item">
+                <div class="example-image" style="background: linear-gradient(45deg, #45b7d1, #96ceb4);">
+                  <span data-en="Bedroom Design" data-th="ออกแบบห้องนอน">ออกแบบห้องนอน</span>
+                </div>
+              </div>
+              <div class="example-item">
+                <div class="example-image" style="background: linear-gradient(45deg, #f39c12, #e74c3c);">
+                  <span data-en="Kitchen Design" data-th="ออกแบบห้องครัว">ออกแบบห้องครัว</span>
+                </div>
+              </div>
+              <div class="example-item">
+                <div class="example-image" style="background: linear-gradient(45deg, #9b59b6, #3498db);">
+                  <span data-en="Bathroom Design" data-th="ออกแบบห้องน้ำ">ออกแบบห้องน้ำ</span>
+                </div>
+              </div>
+              <div class="example-item">
+                <div class="example-image" style="background: linear-gradient(45deg, #1abc9c, #2ecc71);">
+                  <span data-en="Office Design" data-th="ออกแบบห้องทำงาน">ออกแบบห้องทำงาน</span>
+                </div>
+              </div>
+              <div class="example-item">
+                <div class="example-image" style="background: linear-gradient(45deg, #e67e22, #f1c40f);">
+                  <span data-en="Outdoor Design" data-th="ออกแบบพื้นที่กลางแจ้ง">ออกแบบพื้นที่กลางแจ้ง</span>
+                </div>
+              </div>
+              <div class="carousel-indicators">
+                <span class="indicator active"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Documents Section -->
+        <section id="documents" class="section documents-section">
+          <div class="container">
+            <h2 data-en="Documents" data-th="เอกสาร">เอกสาร</h2>
+            <div class="documents-grid">
+              <div class="document-card">
+                <div class="document-icon">📄</div>
+                <h3 data-en="User Manual" data-th="คู่มือการใช้งาน">คู่มือการใช้งาน</h3>
+                <p data-en="Complete guide for using the application" data-th="คู่มือฉบับสมบูรณ์สำหรับการใช้งานแอปพลิเคชัน">คู่มือฉบับสมบูรณ์สำหรับการใช้งานแอปพลิเคชัน</p>
+                <button class="download-btn" data-en="Download PDF" data-th="ดาวน์โหลด PDF">ดาวน์โหลด PDF</button>
+              </div>
+              <div class="document-card">
+                <div class="document-icon">📚</div>
+                <h3 data-en="Tutorial Guide" data-th="คู่มือสอนใช้งาน">คู่มือสอนใช้งาน</h3>
+                <p data-en="Step-by-step tutorials" data-th="บทเรียนทีละขั้นตอน">บทเรียนทีละขั้นตอน</p>
+                <button class="download-btn" data-en="Download PDF" data-th="ดาวน์โหลด PDF">ดาวน์โหลด PDF</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="section gallery-section">
+          <div class="container">
+            <h2 data-en="Gallery" data-th="รูปผลงาน">รูปผลงาน</h2>
+            <div class="gallery-grid">
+              <div class="gallery-item">
+                <div class="gallery-image" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                  <span data-en="Project 1" data-th="ผลงาน 1">ผลงาน 1</span>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <div class="gallery-image" style="background: linear-gradient(45deg, #f093fb, #f5576c);">
+                  <span data-en="Project 2" data-th="ผลงาน 2">ผลงาน 2</span>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <div class="gallery-image" style="background: linear-gradient(45deg, #4facfe, #00f2fe);">
+                  <span data-en="Project 3" data-th="ผลงาน 3">ผลงาน 3</span>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <div class="gallery-image" style="background: linear-gradient(45deg, #43e97b, #38f9d7);">
+                  <span data-en="Project 4" data-th="ผลงาน 4">ผลงาน 4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section about-section">
+          <div class="container">
+            <h2 data-en="About Creator" data-th="แนะนำผู้สร้าง">แนะนำผู้สร้าง</h2>
+            <div class="creator-card">
+              <div class="creator-image">
+                <div class="avatar-placeholder">👤</div>
+              </div>
+              <div class="creator-info">
+                <h3 id="creator-name">Creator Name</h3>
+                <div class="creator-details">
+                  <p class="detail-line">Line 1: Developer Information</p>
+                  <p class="detail-line">Line 2: Experience Details</p>
+                  <p class="detail-line">Line 3: Specialization</p>
+                  <p class="detail-line">Line 4: Education</p>
+                  <p class="detail-line">Line 5: Skills</p>
+                  <p class="detail-line">Line 6: Contact Information</p>
+                </div>
+                <div class="creator-selector">
+                  <div class="team-circle">
+                    <div class="team-member active" data-member="0">👤</div>
+                    <div class="team-member" data-member="1">👤</div>
+                    <div class="team-member" data-member="2">👤</div>
+                  </div>
+                </div>
+                <div class="contact-links">
+                  <a href="#" class="contact-link">📧 Email</a>
+                  <a href="#" class="contact-link">🌐 Website</a>
+                  <a href="#" class="contact-link">📱 Social</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="contact-bar">
+            <a href="#" class="contact-item">📧 Email</a>
+            <a href="#" class="contact-item">📞 Phone</a>
+            <a href="#" class="contact-item">🌐 Website</a>
+            <a href="#" class="contact-item">📱 Social Media</a>
+          </div>
+        </footer>
+      </div>
+
+      <!-- Page 2: Creative Projects -->
+      <div id="creative-page" class="page">
+        <div class="projects-header">
+          <h1 data-en="Your Projects" data-th="โปรเจกต์ของคุณ">โปรเจกต์ของคุณ</h1>
+          <div class="search-bar">
+            <input type="text" placeholder="Search designs..." data-en-placeholder="Search designs..." data-th-placeholder="ค้นหาดีไซน์...">
+            <button class="search-btn">🔍</button>
+          </div>
+        </div>
+
+        <div class="projects-container">
+          <div class="sidebar-projects">
+            <button class="create-project-btn" data-en="Create New Project" data-th="สร้างโปรเจกต์ใหม่">+ สร้างโปรเจกต์ใหม่</button>
+            <div class="project-categories">
+              <h3 data-en="Categories" data-th="หมวดหมู่">หมวดหมู่</h3>
+              <ul>
+                <li><a href="#" data-en="All Projects" data-th="โปรเจกต์ทั้งหมด">โปรเจกต์ทั้งหมด</a></li>
+                <li><a href="#" data-en="Recent" data-th="ล่าสุด">ล่าสุด</a></li>
+                <li><a href="#" data-en="Favorites" data-th="รายการโปรด">รายการโปรด</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="projects-grid">
+            <div class="empty-state" id="empty-state">
+              <div class="empty-icon">📁</div>
+              <h3 data-en="No projects yet" data-th="ยังไม่มีโปรเจกต์">ยังไม่มีโปรเจกต์</h3>
+              <p data-en="Create your first 3D interior design project" data-th="สร้างโปรเจกต์ออกแบบตกแต่งภายใน 3D แรกของคุณ">สร้างโปรเจกต์ออกแบบตกแต่งภายใน 3D แรกของคุณ</p>
+            </div>
+
+            <!-- Project items will be dynamically generated -->
+            <div class="project-item" style="display: none;">
+              <div class="project-thumbnail">
+                <div class="project-image"></div>
+              </div>
+              <div class="project-info">
+                <h4 class="project-name">Project Name</h4>
+                <p class="project-date">Created: 2024-01-01</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 3: 3D Project Editor -->
+      <div id="editor-page" class="page">
+        <div class="editor-header">
+          <div class="editor-nav">
+            <button class="back-btn">← <span data-en="Back" data-th="กลับ">กลับ</span></button>
+            <h2 id="project-title">Untitled Project</h2>
+          </div>
+          <div class="editor-controls">
+            <button class="control-btn" id="undo-btn" title="Undo (Ctrl+Z)">↶</button>
+            <button class="control-btn" id="redo-btn" title="Redo (Ctrl+Shift+Z)">↷</button>
+            <button class="settings-btn" id="settings-btn" data-en="Settings" data-th="การตั้งค่า">⚙️ การตั้งค่า</button>
+          </div>
+        </div>
+
+        <div class="editor-content">
+          <div class="sidebar" id="editor-sidebar">
+            <div class="sidebar-tabs">
+              <button class="tab-btn active" data-tab="build" data-en="Build" data-th="สร้าง">สร้าง</button>
+              <button class="tab-btn" data-tab="furnish" data-en="Furnish" data-th="ตกแต่ง">ตกแต่ง</button>
+              <button class="tab-btn" data-tab="outdoor" data-en="Outdoor" data-th="กลางแจ้ง">กลางแจ้ง</button>
+              <button class="tab-btn" data-tab="furniture" data-en="Find Furniture" data-th="ค้นหาเฟอร์นิเจอร์">ค้นหาเฟอร์นิเจอร์</button>
+            </div>
+
+            <div class="tab-content">
+              <div class="tab-panel active" id="build-panel">
+                <h3 data-en="Building Tools" data-th="เครื่องมือสร้าง">เครื่องมือสร้าง</h3>
+                <div class="tool-grid">
+                  <button class="tool-btn">🏠 <span data-en="Walls" data-th="ผนัง">ผนัง</span></button>
+                  <button class="tool-btn">🚪 <span data-en="Doors" data-th="ประตู">ประตู</span></button>
+                  <button class="tool-btn">🪟 <span data-en="Windows" data-th="หน้าต่าง">หน้าต่าง</span></button>
+                  <button class="tool-btn">📐 <span data-en="Floors" data-th="พื้น">พื้น</span></button>
+                </div>
+              </div>
+
+              <div class="tab-panel" id="furnish-panel">
+                <h3 data-en="Furniture Categories" data-th="หมวดหมู่เฟอร์นิเจอร์">หมวดหมู่เฟอร์นิเจอร์</h3>
+                <div class="category-list">
+                  <button class="category-btn" data-category="bedroom">🛏️ <span data-en="Bedroom" data-th="ห้องนอน">ห้องนอน</span></button>
+                  <button class="category-btn" data-category="living">🛋️ <span data-en="Living Room" data-th="ห้องนั่งเล่น">ห้องนั่งเล่น</span></button>
+                  <button class="category-btn" data-category="kitchen">🍳 <span data-en="Kitchen" data-th="ห้องครัว">ห้องครัว</span></button>
+                  <button class="category-btn" data-category="bathroom">🚿 <span data-en="Bathroom" data-th="ห้องน้ำ">ห้องน้ำ</span></button>
+                </div>
+                <div class="furniture-items" id="furniture-items">
+                  <!-- Dynamic furniture items will be populated here -->
+                </div>
+              </div>
+
+              <div class="tab-panel" id="outdoor-panel">
+                <h3 data-en="Outdoor Elements" data-th="องค์ประกอบกลางแจ้ง">องค์ประกอบกลางแจ้ง</h3>
+                <div class="tool-grid">
+                  <button class="tool-btn">🌳 <span data-en="Trees" data-th="ต้นไม้">ต้นไม้</span></button>
+                  <button class="tool-btn">🌺 <span data-en="Plants" data-th="พืช">พืช</span></button>
+                  <button class="tool-btn">🪑 <span data-en="Outdoor Furniture" data-th="เฟอร์นิเจอร์กลางแจ้ง">เฟอร์นิเจอร์กลางแจ้ง</span></button>
+                  <button class="tool-btn">💡 <span data-en="Lighting" data-th="แสงไฟ">แสงไฟ</span></button>
+                </div>
+              </div>
+
+              <div class="tab-panel" id="furniture-panel">
+                <div class="search-furniture">
+                  <input type="text" placeholder="Search furniture..." data-en-placeholder="Search furniture..." data-th-placeholder="ค้นหาเฟอร์นิเจอร์...">
+                </div>
+                <div class="furniture-results">
+                  <div class="furniture-item">
+                    <div class="furniture-preview"></div>
+                    <span data-en="Modern Chair" data-th="เก้าอี้โมเดิร์น">เก้าอี้โมเดิร์น</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="viewport" id="viewport">
+            <canvas id="three-canvas"></canvas>
+            <div class="viewport-controls">
+              <button class="viewport-btn" data-en="Reset View" data-th="📷"></button>
+              <button class="viewport-btn" data-en="Top View" data-th="⬆️"></button>
+              <button class="viewport-btn" data-en="Side View" data-th="➡️"></button>
+              <button class="help-btn" id="viewport-help" title="Keyboard & Mouse Controls" data-en="Help" data-th="❓"></button>
+            </div>
+            
+            <!-- Viewport Help Panel -->
+            <div class="viewport-help-panel" id="viewport-help-panel">
+              <div class="help-panel-header">
+                <h4 data-en="3D Controls" data-th="การควบคุม 3D">การควบคุม 3D</h4>
+                <button class="close-help-btn">×</button>
+              </div>
+              <div class="help-panel-content">
+                <table class="controls-table">
+                  <tr>
+                    <th data-en="Action" data-th="การกระทำ">การกระทำ</th>
+                    <th data-en="Mouse / Shortcut" data-th="เมาส์ / ปุ่มลัด">เมาส์ / ปุ่มลัด</th>
+                  </tr>
+                  <tr>
+                    <td data-en="Rotate Around View Point" data-th="หมุนรอบจุด View Point">หมุนรอบจุด View Point</td>
+                    <td data-en="Left Click & Drag" data-th="คลิกซ้ายแล้วลาก">คลิกซ้ายแล้วลาก</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Pan Model Area" data-th="เลื่อนพื้นที่วางโมเดล">เลื่อนพื้นที่วางโมเดล</td>
+                    <td data-en="Right Click & Drag" data-th="คลิกขวาแล้วลาก">คลิกขวาแล้วลาก</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Zoom In/Out" data-th="ซูมเข้า/ออก">ซูมเข้า/ออก</td>
+                    <td data-en="Scroll Mouse Wheel" data-th="หมุน Mouse Wheel">หมุน Mouse Wheel</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Reset View" data-th="รีเซ็ตมุมมอง">รีเซ็ตมุมมอง</td>
+                    <td data-en="Home Key" data-th="ปุ่ม Home">ปุ่ม Home</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Top View" data-th="มุมมองจากด้านบน">มุมมองจากด้านบน</td>
+                    <td data-en="Numpad 7 or 7" data-th="กด Numpad 7 หรือ 7">กด Numpad 7 หรือ 7</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Side View" data-th="มุมมองด้านข้าง">มุมมองด้านข้าง</td>
+                    <td data-en="Numpad 3 or 3" data-th="กด Numpad 3 หรือ 3">กด Numpad 3 หรือ 3</td>
+                  </tr>
+                  <tr>
+                    <td data-en="Isometric View" data-th="มุมมอง Isometric">มุมมอง Isometric</td>
+                    <td data-en="Numpad 0 or 0" data-th="Numpad 0 หรือ 0">Numpad 0 หรือ 0</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+          <div class="settings-content">
+            <h3 data-en="Settings" data-th="การตั้งค่า">การตั้งค่า</h3>
+            <div class="setting-group">
+              <label data-en="Language" data-th="ภาษา">ภาษา</label>
+              <select id="editor-language-select">
+                <option value="th">ไทย</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="setting-group">
+              <label data-en="Grid Size" data-th="ขนาดกริด">ขนาดกริด</label>
+              <select id="area-size-select">
+                <option value="small" data-en="Small (6x6)" data-th="เล็ก (6x6)">เล็ก (6x6)</option>
+                <option value="medium" selected data-en="Medium (10x10)" data-th="กลาง (10x10)">กลาง (10x10)</option>
+                <option value="large" data-en="Large (16x16)" data-th="ใหญ่ (16x16)">ใหญ่ (16x16)</option>
+              </select>
+            </div>
+            <div class="setting-group">
+              <label data-en="Grid Density" data-th="ความละเอียดกริด">ความละเอียดกริด</label>
+              <input type="range" min="5" max="20" value="10" id="grid-size">
+            </div>
+            <div class="setting-group">
+              <label data-en="Rotation X" data-th="การหมุน X">การหมุน X</label>
+              <input type="range" min="0" max="360" value="0" id="rotation-x">
+            </div>
+            <div class="setting-group">
+              <label data-en="Rotation Y" data-th="การหมุน Y">การหมุน Y</label>
+              <input type="range" min="0" max="360" value="0" id="rotation-y">
+            </div>
+            <button class="close-settings" id="close-settings">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Creation Modal -->
+      <div class="modal" id="project-modal">
         <div class="modal-content">
-            <h2>Select Room Size</h2>
-            <div class="size-selection">
-                <div class="size-option">
-                    <label for="room-width">Width (meters):</label>
-                    <input type="number" id="room-width" min="3" max="30" value="10" step="1">
-                </div>
-                <div class="size-option">
-                    <label for="room-length">Length (meters):</label>
-                    <input type="number" id="room-length" min="3" max="30" value="10" step="1">
-                </div>
-                <div class="room-preview">
-                    <div id="room-preview-visual"></div>
-                    <p>Preview (top view)</p>
-                </div>
+          <div class="modal-step" id="step-1">
+            <div class="modal-header">
+              <button class="back-to-projects-btn" id="back-to-projects">← <span data-en="Back" data-th="กลับ">กลับ</span></button>
+              <h3 data-en="Create New Project" data-th="สร้างโปรเจกต์ใหม่">สร้างโปรเจกต์ใหม่</h3>
             </div>
-            <div class="modal-buttons">
-                <button id="cancel-room-btn" class="secondary-btn">Cancel</button>
-                <button id="confirm-room-btn" class="primary-btn">Create Room</button>
+            <div class="form-group">
+              <label data-en="Project Name" data-th="ชื่อโปรเจกต์">ชื่อโปรเจกต์</label>
+              <input type="text" id="project-name-input" placeholder="Enter project name" data-en-placeholder="Enter project name" data-th-placeholder="ใส่ชื่อโปรเจกต์">
             </div>
+            <div class="modal-actions">
+              <button class="btn-cancel" id="cancel-project" data-en="Cancel" data-th="ยกเลิก">ยกเลิก</button>
+              <button class="btn-next" id="next-step" data-en="Next" data-th="ถัดไป">ถัดไป</button>
+            </div>
+          </div>
+
+          <div class="modal-step" id="step-2" style="display: none;">
+            <h3 data-en="Choose Room Size" data-th="เลือกขนาดห้อง">เลือกขนาดห้อง</h3>
+            <div class="size-options">
+              <button class="size-option" data-size="small">
+                <div class="size-visual small"></div>
+                <span data-en="Small (3x3m)" data-th="เล็ก (3x3 เมตร)">เล็ก (3x3 เมตร)</span>
+              </button>
+              <button class="size-option" data-size="medium">
+                <div class="size-visual medium"></div>
+                <span data-en="Medium (5x5m)" data-th="กลาง (5x5 เมตร)">กลาง (5x5 เมตร)</span>
+              </button>
+              <button class="size-option" data-size="large">
+                <div class="size-visual large"></div>
+                <span data-en="Large (8x8m)" data-th="ใหญ่ (8x8 เมตร)">ใหญ่ (8x8 เมตร)</span>
+              </button>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-cancel" id="back-step" data-en="Back" data-th="กลับ">กลับ</button>
+              <button class="btn-create" id="create-project" data-en="Create Project" data-th="สร้างโปรเจกต์">สร้างโปรเจกต์</button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Main Design Area (Initially Hidden) -->
-    <div id="design-area" style="display: none;">
-        <!-- 3D Canvas -->
-        <canvas id="canvas3d"></canvas>
-        
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="function-tabs">
-                    <div class="function-tab active" data-function="build">Build</div>
-                    <div class="function-tab" data-function="furnish">Furnish</div>
-                    <div class="function-tab" data-function="outdoor">Outdoor</div>
-                    <div class="function-tab" data-function="find">Find</div>
-                </div>
-            </div>
-            
-            <div class="sidebar-content">
-                <!-- Categories for Build Function -->
-                <div class="function-content active" id="build-content">
-                    <div class="category" data-category="walls">Walls</div>
-                    <div class="category" data-category="floors">Floors</div>
-                    <div class="category" data-category="doors">Doors</div>
-                    <div class="category" data-category="windows">Windows</div>
-                    <div class="category" data-category="stairs">Stairs</div>
-                </div>
-                
-                <!-- Categories for Furnish Function -->
-                <div class="function-content" id="furnish-content">
-                    <div class="category" data-category="general">General</div>
-                    <div class="category" data-category="bedroom">Bedroom</div>
-                    <div class="category" data-category="livingroom">Living Room</div>
-                    <div class="category" data-category="kitchen">Kitchen</div>
-                    <div class="category" data-category="bathroom">Bathroom</div>
-                    <div class="category" data-category="office">Office</div>
-                </div>
-                
-                <!-- Categories for Outdoor Function -->
-                <div class="function-content" id="outdoor-content">
-                    <div class="category" data-category="plants">Plants</div>
-                    <div class="category" data-category="furniture">Outdoor Furniture</div>
-                    <div class="category" data-category="decor">Outdoor Decor</div>
-                    <div class="category" data-category="lighting">Outdoor Lighting</div>
-                </div>
-                
-                <!-- Find Furniture Search -->
-                <div class="function-content" id="find-content">
-                    <div class="search-container">
-                        <input type="text" id="furniture-search" placeholder="Search furniture...">
-                        <button id="search-btn">Search</button>
-                    </div>
-                    <div id="search-results"></div>
-                </div>
-            </div>
-            
-            <!-- Items Container (shows when category is selected) -->
-            <div class="items-container" style="display: none;">
-                <div class="items-header">
-                    <button class="back-btn">← Back</button>
-                    <h3 id="category-title">Category Name</h3>
-                </div>
-                <div id="items-list"></div>
-            </div>
+    <!-- Universal Settings Panel - Available on all pages -->
+    <div id="universal-settings-panel" class="universal-settings-panel">
+      <div class="universal-settings-content">
+        <h3 data-en="Settings" data-th="การตั้งค่า">การตั้งค่า</h3>
+        <div class="universal-setting-group">
+          <label data-en="Language" data-th="ภาษา">ภาษา</label>
+          <select id="universal-language-select">
+            <option value="th">ไทย</option>
+            <option value="en">English</option>
+          </select>
         </div>
-        
-        <!-- Controls Bar -->
-        <div class="controls-bar">
-            <button id="light-btn" class="control-btn">Adjust Lighting</button>
-            <button id="camera-btn" class="control-btn">Camera View</button>
-            <button id="theme-btn" class="control-btn">Theme Settings</button>
-            <button id="save-btn" class="control-btn">Save Project</button>
-            <button id="exit-btn" class="control-btn">Exit to Menu</button>
+        <div class="universal-setting-group">
+          <label data-en="Theme" data-th="ธีม">ธีม</label>
+          <div class="theme-toggle-wrapper">
+            <button id="universal-theme-toggle" class="theme-toggle-btn">
+              <div class="theme-option">
+                <div class="theme-circle dark"></div>
+                <span data-en="Dark" data-th="มืด">มืด</span>
+              </div>
+              <div class="theme-option">
+                <div class="theme-circle light"></div>
+                <span data-en="Light" data-th="สว่าง">สว่าง</span>
+              </div>
+            </button>
+          </div>
         </div>
-        
-        <!-- Lighting Controls (Initially Hidden) -->
-        <div id="lighting-panel" class="control-panel" style="display: none;">
-            <h3>Lighting Controls</h3>
-            <div class="slider-control">
-                <label for="ambient-light">Ambient Light:</label>
-                <input type="range" id="ambient-light" min="0" max="1" step="0.1" value="0.5">
-            </div>
-            <div class="slider-control">
-                <label for="directional-light">Directional Light:</label>
-                <input type="range" id="directional-light" min="0" max="1" step="0.1" value="0.7">
-            </div>
-            <button id="close-lighting" class="close-panel">Close</button>
-        </div>
-        
-        <!-- Object Controls (Initially Hidden) -->
-        <div id="object-controls" class="object-controls">
-            <h3>Object Controls</h3>
-            <div class="slider-control">
-                <label for="object-scale">Scale:</label>
-                <input type="range" id="object-scale" min="0.1" max="3" step="0.1" value="1">
-            </div>
-            <div class="slider-control">
-                <label for="object-rotation">Rotation (Y):</label>
-                <input type="range" id="object-rotation" min="0" max="360" step="5" value="0">
-            </div>
-            <button id="move-up" class="control-btn">Move Up</button>
-            <button id="move-down" class="control-btn">Move Down</button>
-            <button id="delete-object" class="control-btn">Delete</button>
-        </div>
-        
-        <!-- Theme Settings Panel (Initially Hidden) -->
-        <div id="theme-panel" class="control-panel" style="display: none;">
-            <h3>Theme Settings</h3>
-            <div class="theme-options">
-                <div class="theme-option" data-theme="light">
-                    <div class="theme-preview light-theme"></div>
-                    <div class="theme-name">Light Theme</div>
-                </div>
-                <div class="theme-option" data-theme="dark">
-                    <div class="theme-preview dark-theme"></div>
-                    <div class="theme-name">Dark Theme</div>
-                </div>
-            </div>
-            <button id="close-theme" class="close-panel">Close</button>
-        </div>
+        <button class="close-universal-settings" id="close-universal-settings">×</button>
+      </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Include Three.js and GSAP from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script type="module" src="/main.js"></script>
+  </body>
 </html>

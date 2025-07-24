@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ทดสอบโมเดล 3D</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      font-family: monospace;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">กำลังโหลด...</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/DRACOLoader.js"></script>
+
+  <script>
+    // สคริปต์ทดสอบโมเดล
+    let scene, camera, renderer, controls;
+    let modelPath = 'models/furniture/chair.glb'; // โมเดลที่ต้องการทดสอบ
+    
+    init();
+    
+    function init() {
+      // สร้าง scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x333333);
+      
+      // สร้าง camera
+      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(2, 2, 2);
+      camera.lookAt(0, 0, 0);
+      
+      // สร้าง renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild(renderer.domElement);
+      
+      // สร้าง controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.1;
+      
+      // แสง
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(5, 10, 5);
+      directionalLight.castShadow = true;
+      scene.add(directionalLight);
+      
+      // พื้น
+      const gridHelper = new THREE.GridHelper(10, 10);
+      scene.add(gridHelper);
+      
+      // โหลดโมเดล
+      loadModel();
+      
+      // Animation loop
+      animate();
+      
+      // รองรับการเปลี่ยนขนาดหน้าจอ
+      window.addEventListener('resize', onWindowResize);
+    }
+    
+    function loadModel() {
+      const info = document.getElementById('info');
+      info.textContent = 'กำลังโหลดโมเดล...';
+      
+      // ตรวจสอบว่ามีคลาส GLTFLoader หรือไม่
+      if (typeof THREE.GLTFLoader === 'undefined') {
+        info.textContent = 'ไม่พบ GLTFLoader';
+        console.error('GLTFLoader not found');
+        return;
+      }
+      
+      // สร้าง loader
+      const loader = new THREE.GLTFLoader();
+      
+      // เพิ่ม DRACOLoader ถ้ามี
+      if (typeof THREE.DRACOLoader !== 'undefined') {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+        loader.setDRACOLoader(dracoLoader);
+      }
+      
+      // โหลดโมเดล
+      loader.load(
+        modelPath,
+        function(gltf) {
+          const model = gltf.scene;
+          
+          // ทำให้โมเดลทั้งหมดรับเงา
+          model.traverse(function(child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+          
+          // ปรับขนาดโมเดล
+          model.scale.set(0.5, 0.5, 0.5);
+          
+          // เพิ่มโมเดลลงใน scene
+          scene.add(model);
+          
+          // แสดงข้อความว่าโหลดเสร็จแล้ว
+          info.textContent = 'โหลดโมเดลเสร็จแล้ว - ' + modelPath;
+          console.log('Model loaded successfully:', gltf);
+        },
+        function(xhr) {
+          // แสดงความคืบหน้า
+          const percent = xhr.loaded / xhr.total * 100;
+          info.textContent = 'กำลังโหลด ' + Math.round(percent) + '%';
+        },
+        function(error) {
+          // แสดงข้อผิดพลาด
+          info.textContent = 'เกิดข้อผิดพลาดในการโหลด: ' + error.message;
+          console.error('Error loading model:', error);
+        }
+      );
+    }
+    
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      controls.update();
+      
+      renderer.render(scene, camera);
+    }
+    
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+  </script>
+</body>
+</html>
